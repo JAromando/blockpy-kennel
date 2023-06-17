@@ -146,7 +146,7 @@ export class OnRunConfiguration extends InstructorConfiguration {
         this.main.model.execution.instructor.sysmodules = Sk.sysmodules;
         Sk.globals = {};
         let results = module.$d.on_run.$d;
-        this.main.components.feedback.presentFeedback(results);
+        this.main.components.feedback.presentFeedback(results, this.code);
         this.main.model.execution.reports["instructor"]["success"] = true;
         let success = Sk.ffi.remapToJs(results.SUCCESS);
         this.main.model.submission.correct(success || this.main.model.submission.correct());

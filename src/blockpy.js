@@ -359,6 +359,7 @@ export class BlockPy {
                 feedback: {
                     // str (markdown)
                     message: ko.observable("Ready"),
+                    openai: ko.observable("❗ OpenAI response will appear here!"),
                     category: ko.observable(null),
                     label: ko.observable(null),
                     hidden: ko.observable(false),

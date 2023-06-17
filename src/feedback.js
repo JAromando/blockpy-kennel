@@ -1,4 +1,5 @@
 import {arrayMove, capitalize, pyStr} from "./utilities";
+import {runGPTPrompt} from "./openai";
 
 export let FEEDBACK_HTML = `
 
@@ -46,8 +47,10 @@ export let FEEDBACK_HTML = `
             data-bind="text: execution.feedback.label"></strong>
         <div class="blockpy-feedback-message"
             data-bind="html: execution.feedback.message"></div>
+        <div class="blockpy-feedback-openai"
+            data-bind="text: execution.feedback.openai"></div>
     </div>
-</div>            
+</div>
 `;
 
 export class BlockPyFeedback {
@@ -71,6 +74,7 @@ export class BlockPyFeedback {
         this.label = this.tag.find(".blockpy-feedback-label");
         this.message = this.tag.find(".blockpy-feedback-message");
         this.positive = this.tag.find(".blockpy-feedback-positive");
+        this.openai = this.tag.find(".blockpy-feedback-openai");
 
         // TODO: If they change the student extra files, also update the dirty flag
         this.main.model.submission.code.subscribe(() => this.main.model.display.dirtySubmission(true));
@@ -108,6 +112,7 @@ export class BlockPyFeedback {
      */
     clear(message="Ready") {
         this.feedbackModel.message(message);
+        this.feedbackModel.openai("❗ OpenAI response will appear here!");
         this.feedbackModel.category(null);
         this.feedbackModel.label(null);
         this.feedbackModel.hidden(false);
@@ -136,15 +141,12 @@ export class BlockPyFeedback {
         return null;*/
     };
 
-    updateRegularFeedback() {
-
-    }
-
     /**
      * Updates the model with these new execution results
      * @param executionResults
+     * @param studentCode
      */
-    updateFeedback(executionResults) {
+    updateFeedback(executionResults, studentCode) {
         // Parse out data
         let message = Sk.ffi.remapToJs(executionResults.MESSAGE);
         let category = Sk.ffi.remapToJs(executionResults.CATEGORY);
@@ -211,6 +213,14 @@ export class BlockPyFeedback {
             let positiveData = positives[i];
             this.addPositiveFeedback(positiveData.message, "star", "green", () => this.main.components.dialog.POSITIVE_FEEDBACK_FULL(positiveData.title, positiveData.message));
         }
+
+        // Run it through OpenAI
+        this.feedbackModel.openai("Retrieving response...");
+        runGPTPrompt(`This is my code:\n\n${studentCode}\n\nThis is the message I got:\n\n${message}\n\nSuggest code to fix the problem if one exists.`)
+            .then(response => {
+                this.feedbackModel.openai(response);
+                console.log("OpenAI response: " + response);
+            });
     }
 
     clearPositiveFeedback() {
@@ -240,8 +250,8 @@ export class BlockPyFeedback {
     /**
      * Present any accumulated feedback
      */
-    presentFeedback(executionResults) {
-        this.updateFeedback(executionResults);
+    presentFeedback(executionResults, studentCode) {
+        this.updateFeedback(executionResults, studentCode);
 
         this.category.off("click");
         if (this.main.model.display.instructor()) {

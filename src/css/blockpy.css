@@ -259,6 +259,13 @@ table.pedal-table pre.pedal-python-code {
     color: red;
 }
 
+.blockpy-feedback .blockpy-feedback-openai {
+    border: #dcd911 3px solid;
+    border-radius: 8px;
+    padding: 4px;
+    margin-top: 16px;
+}
+
 /** Trace **/
 .blockpy-content .blockpy-trace {
     padding-top: 10px;

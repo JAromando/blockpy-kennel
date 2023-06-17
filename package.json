@@ -39,6 +39,7 @@
     "yargs": "17.7.2"
   },
   "dependencies": {
-    "caniuse-lite": "^1.0.30001498"
+    "caniuse-lite": "^1.0.30001498",
+    "openai": "^3.3.0"
   }
 }
