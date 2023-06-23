@@ -52,7 +52,7 @@ cd ../../..
 
 
 # BlockPy
-cd blockpy-edu && git clone https://github.com/THRALLab/blockpy-kennel blockpy && cd blockpy
+cd blockpy-edu && git clone git@github.com:THRALLab/blockpy-kennel.git blockpy && cd blockpy
 npm install
 npm run build
 
